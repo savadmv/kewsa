@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380720915021",
+    "project_id": "kewsa-b3f15",
+    "storage_bucket": "kewsa-b3f15.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380720915021:android:4111c2fd33c85e17073204",
+        "android_client_info": {
+          "package_name": "com.savad.kewsa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6RxeEbGMb57-mnvfftbobCsHuZn3epI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
