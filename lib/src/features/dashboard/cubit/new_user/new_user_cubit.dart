@@ -17,6 +17,7 @@ class NewUserCubit extends Cubit<NewUserState> {
     emit(
       state.copyWith(
         personalDetailsIsValid: Formz.validate([
+          state.photo,
           state.email,
           state.name,
           state.address,
@@ -60,6 +61,12 @@ class NewUserCubit extends Cubit<NewUserState> {
         ]),
       ),
     );
+  }
+
+  Future<void> pickImage() async {
+    final photo = await FileServices().pickImage(ImageSource.gallery);
+    emit(state.copyWith(photo: FormText.dirty(photo?.path)));
+    _validatepersonalDetails();
   }
 
   void emailChanged(String value) {
@@ -125,10 +132,6 @@ class NewUserCubit extends Cubit<NewUserState> {
   void unitNameChanged(String value) {
     emit(state.copyWith(unitName: FormText.dirty(value)));
     _validate();
-  }
-
-  void photoChanged(String value) {
-    emit(state.copyWith(photo: value));
   }
 
   void governmentPensionChanged(String value) {
@@ -218,7 +221,7 @@ class NewUserCubit extends Cubit<NewUserState> {
           education: state.education.value,
           dateOfBirth: state.dateOfBirth.value,
           email: state.email.value,
-          photoUrl: state.photo,
+          photoUrl: state.photo.value,
           pincode: state.pincode.value,
           panchayatOrMunicipality: state.panchayatOrMunicipality.value,
           name: state.name.value,

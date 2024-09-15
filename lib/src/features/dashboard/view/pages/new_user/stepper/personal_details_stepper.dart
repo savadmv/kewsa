@@ -14,6 +14,7 @@ class PersonalDetailsStepper extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: const [
+          _PhotoInput(),
           _NameInput(),
           _EmailInput(),
           _PhoneInput(),
@@ -66,6 +67,47 @@ class _ShortInputs extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class _PhotoInput extends StatelessWidget {
+  const _PhotoInput();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<NewUserCubit, NewUserState>(
+      buildWhen: (p, c) => p.photo != c.photo,
+      builder: (context, state) {
+        return Column(
+          children: [
+            InkWell(
+              onTap: context.read<NewUserCubit>().pickImage,
+              child: SizedBox.square(
+                dimension: context.width * .3,
+                child: switch (state.photo.value.isNotEmpty) {
+                  true => Image.file(
+                      File(state.photo.value),
+                    ),
+                  false => ColoredBox(
+                      color: Colors.grey.shade200,
+                      child: Icon(
+                        Icons.person,
+                        size: context.width * .2,
+                      ),
+                    ),
+                },
+              ),
+            ).pOnly(bottom: 8),
+            if (state.photo.displayError != null)
+              const Text(
+                'Please add photo!',
+                style: TextStyle(color: AppColors.error),
+              ).pOnly(bottom: 8),
+            const SizedBox(height: 8),
+          ],
+        );
+      },
     );
   }
 }

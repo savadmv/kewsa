@@ -17,7 +17,7 @@ class NewUserState extends Equatable {
   final FormText nomineeName;
   final Adhaar nomineeAdhaar;
   final FormText unitName;
-  final String? photo;
+  final FormText photo;
   final ({FormText number, FormText yor}) governmentPension;
   final ({FormText number, FormText yor}) kewsaMembership;
   final ({FormText number, FormText yor}) stateWelfareFund;
@@ -45,7 +45,7 @@ class NewUserState extends Equatable {
     this.nomineeName = const FormText.pure(),
     this.nomineeAdhaar = const Adhaar.pure(),
     this.unitName = const FormText.pure(),
-    this.photo,
+    this.photo = const FormText.pure(),
     this.governmentPension = (number: const FormText.pure(), yor: const FormText.pure()),
     this.kewsaMembership = (number: const FormText.pure(), yor: const FormText.pure()),
     this.stateWelfareFund = (number: const FormText.pure(), yor: const FormText.pure()),
@@ -108,7 +108,7 @@ class NewUserState extends Equatable {
     FormText? nomineeName,
     Adhaar? nomineeAdhaar,
     FormText? unitName,
-    String? photo,
+    FormText? photo,
     ({FormText number, FormText yor})? governmentPension,
     ({FormText number, FormText yor})? kewsaMembership,
     ({FormText number, FormText yor})? stateWelfareFund,
