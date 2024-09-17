@@ -3,7 +3,7 @@ import 'package:kewsa/imports_bindings.dart';
 ///*
 final lightTheme = ThemeData(
   fontFamily: 'PlayfairDisplay',
-  scaffoldBackgroundColor: Color(0xfffafafa),
+  scaffoldBackgroundColor: AppColors.light,
   primarySwatch: Colors.lightGreen,
   primaryColor: AppColors.primary,
   splashColor: Colors.transparent,

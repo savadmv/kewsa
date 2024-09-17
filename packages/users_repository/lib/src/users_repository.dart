@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:users_repository/src/models/user.dart';
+import 'package:users_repository/users_repository.dart';
 
 /// {@template users_repository}
 /// Repository which manages user authentication.
@@ -44,6 +45,9 @@ class UsersRepository {
 
   /// Users Collection
   late final _usersDetailsCollection = _firestore.collection('users_details');
+
+  /// Unit Names Collection
+  late final _unitNamesCollection = _firestore.collection('unit_names');
 
   // Create a new user
   Future<void> createUser({required UserEntity user}) async {
@@ -92,6 +96,11 @@ class UsersRepository {
   // Fetch all advertisements
   Stream<List<UserEntity>> get users => _usersCollection.snapshots().asBroadcastStream().map(
         (snapshot) => [...snapshot.docs.map(UserEntity.fromFirestore)],
+      );
+
+  // Fetch all unitNames
+  Stream<List<UnitNameEntity>> get unitNames => _unitNamesCollection.snapshots().asBroadcastStream().map(
+        (snapshot) => [...snapshot.docs.map(UnitNameEntity.fromFirestore)],
       );
 
   //

@@ -23,43 +23,23 @@ class _HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Members'),
-      ),
-      body: Column(
-        children: [
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   children: [
-          //     const SizedBox(width: 12),
-          //     OutlinedButton(
-          //       onPressed: () {},
-          //       style: OutlinedButton.styleFrom(
-          //         padding: const EdgeInsets.symmetric(horizontal: 16),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(8),
-          //         ),
-          //       ),
-          //       child: const Row(
-          //         mainAxisSize: MainAxisSize.min,
-          //         children: [
-          //           Icon(
-          //             Icons.filter_alt_outlined,
-          //             size: 16,
-          //           ),
-          //           SizedBox(width: 4),
-          //           Text(
-          //             'Filter',
-          //             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.dark),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          const Expanded(
-            child: HomeContent(),
+        actions: [
+          IconButton(
+            onPressed: () {
+              final cubit = context.read<HomeCubit>();
+              showModalBottomSheet<void>(
+                context: context,
+                builder: (context) => BlocProvider.value(
+                  value: cubit,
+                  child: const UnitNamesSheet(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.sort),
           ),
         ],
-      ).pad(16),
+      ),
+      body: const HomeContent().pad(16),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push(NewUserPage.route());
