@@ -3,17 +3,20 @@ import 'package:kewsa/imports_bindings.dart';
 class NewUserPage extends StatelessWidget {
   const NewUserPage({
     super.key,
+    this.userDetails,
   });
 
-  static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const NewUserPage());
+  final UserEntity? userDetails;
+
+  static Route<void> route(UserEntity? userDetails) {
+    return MaterialPageRoute<void>(builder: (_) => NewUserPage(userDetails: userDetails));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NewUserCubit(),
-      child: const NewUserContent(),
+      create: (context) => NewUserCubit(userDetails: userDetails),
+      child: NewUserContent(userDetails: userDetails),
     );
   }
 }

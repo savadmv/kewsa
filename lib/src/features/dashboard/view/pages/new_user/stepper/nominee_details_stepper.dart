@@ -62,7 +62,7 @@ class _NomineeAdhaarInput extends StatelessWidget {
           enabled: !state.isSaving,
           keyboardType: TextInputType.number,
           label: 'Nominee Adhaar',
-          limit: 16,
+          limit: 12,
           errorText: switch (state.nomineeAdhaar.error) {
             AdhaarError.empty => 'Please enter adhaar number !',
             AdhaarError.length => 'Adhaar number not valid !',

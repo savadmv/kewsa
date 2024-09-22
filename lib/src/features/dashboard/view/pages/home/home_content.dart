@@ -7,7 +7,7 @@ class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
-      buildWhen: (p, c) => p.isGettingUsers != c.isGettingUsers || p.users != c.users,
+      buildWhen: (p, c) => p.isGettingUsers != c.isGettingUsers || p.users != c.users || p.selUnitNames != c.selUnitNames,
       builder: (context, state) {
         if (state.isGettingUsers) {
           return const Loading();
@@ -17,10 +17,41 @@ class HomeContent extends StatelessWidget {
           return ErrorText(state.error);
         }
 
+        if (state.users.isEmpty) {
+          return const ErrorText("Couldn't find users !");
+        }
+
+        final selUnitNames = [...state.selUnitNames.map((e) => e.unitName?.toLowerCase())];
+
+        final filteredUsers = state.selUnitNames.isEmpty ? state.users : state.users.where((e) => selUnitNames.contains(e.unitName?.toLowerCase()));
+
+        if (filteredUsers.isEmpty) {
+          return const ErrorText("Couldn't find users ! Please clear filters");
+        }
+
         return ListView(
           padding: const EdgeInsets.all(4),
           children: [
-            for (final e in state.users) _UserTile(user: e),
+            if (state.selUnitNames.isNotEmpty)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final unit in state.selUnitNames)
+                      Chip(
+                        shape: const StadiumBorder(),
+                        backgroundColor: AppColors.dark,
+                        labelStyle: const TextStyle(color: AppColors.light),
+                        deleteIconColor: AppColors.light,
+                        label: Text(unit.unitName ?? ''),
+                        onDeleted: () {
+                          context.read<HomeCubit>().updateSelUnitNames(unit, isSelected: true);
+                        },
+                      ).pOnly(right: 8),
+                  ],
+                ).pOnly(bottom: 16),
+              ),
+            for (final e in filteredUsers) _UserTile(user: e),
           ],
         );
       },

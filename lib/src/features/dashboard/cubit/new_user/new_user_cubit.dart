@@ -3,11 +3,69 @@ import 'package:kewsa/imports_bindings.dart';
 part 'new_user_state.dart';
 
 class NewUserCubit extends Cubit<NewUserState> {
-  NewUserCubit({UsersRepository? usersRepository})
-      : _usersRepository = usersRepository ?? UsersRepository(),
-        super(const NewUserState());
+  NewUserCubit({
+    UsersRepository? usersRepository,
+    UserEntity? userDetails,
+  })  : _usersRepository = usersRepository ?? UsersRepository(),
+        super(const NewUserState()) {
+    _updateInitialUserDetails(userDetails);
+  }
 
   final UsersRepository _usersRepository;
+
+  void _updateInitialUserDetails(UserEntity? userDetails) {
+    emit(
+      state.copyWith(
+        photo: FormText.dirty(userDetails?.photoUrl),
+        address: FormText.dirty(userDetails?.address),
+        name: FormText.dirty(userDetails?.name),
+        adhaar: Adhaar.dirty(value: userDetails?.adhaarNumber ?? ''),
+        bloodGroup: FormText.dirty(userDetails?.bloodGroup),
+        education: FormText.dirty(userDetails?.education),
+        dateOfBirth: FormText.dirty(userDetails?.dateOfBirth),
+        email: Email.dirty(userDetails?.email ?? ''),
+        panchayatOrMunicipality: FormText.dirty(userDetails?.panchayatOrMunicipality),
+        phone: Phone.dirty(value: userDetails?.phoneNumber ?? ''),
+        pincode: Pincode.dirty(value: userDetails?.pincode ?? ''),
+        unitName: FormText.dirty(userDetails?.unitName),
+        nomineeName: FormText.dirty(userDetails?.nomineeName),
+        nomineeAdhaar: Adhaar.dirty(value: userDetails?.nomineeAdharNumber ?? ''),
+        cOrbOraOrclassLicense: (
+          number: FormText.dirty(userDetails?.cOrbOraOrclassLicenseNumber?.number),
+          yor: FormText.dirty(
+            userDetails?.cOrbOraOrclassLicenseNumber?.yearOfRenewal,
+          ),
+        ),
+        governmentPension: (
+          number: FormText.dirty(userDetails?.governmentPensionNumber?.number),
+          yor: FormText.dirty(
+            userDetails?.governmentPensionNumber?.yearOfRenewal,
+          ),
+        ),
+        kewsaMembership: (
+          number: FormText.dirty(userDetails?.kewsaMembershipNumber?.number),
+          yor: FormText.dirty(
+            userDetails?.kewsaMembershipNumber?.yearOfRenewal,
+          ),
+        ),
+        stateWelfareFund: (
+          number: FormText.dirty(userDetails?.stateWelfareFundNumber?.number),
+          yor: FormText.dirty(
+            userDetails?.stateWelfareFundNumber?.yearOfRenewal,
+          ),
+        ),
+        wiremenOrsupervisor: (
+          number: FormText.dirty(userDetails?.wiremenOrsupervisorNumber?.number),
+          yor: FormText.dirty(
+            userDetails?.wiremenOrsupervisorNumber?.yearOfRenewal,
+          ),
+        ),
+      ),
+    );
+    _validate();
+    _validateNomineeDetails();
+    _validatepersonalDetails();
+  }
 
   void changeStepper(int index) {
     emit(state.copyWith(stepper: index));
@@ -65,8 +123,10 @@ class NewUserCubit extends Cubit<NewUserState> {
 
   Future<void> pickImage() async {
     final photo = await FileServices().pickImage(ImageSource.gallery);
-    emit(state.copyWith(photo: FormText.dirty(photo?.path)));
-    _validatepersonalDetails();
+    if (photo?.path.isNotEmpty ?? false) {
+      emit(state.copyWith(photo: FormText.dirty(photo?.path)));
+      _validatepersonalDetails();
+    }
   }
 
   void emailChanged(String value) {
@@ -221,7 +281,7 @@ class NewUserCubit extends Cubit<NewUserState> {
           education: state.education.value,
           dateOfBirth: state.dateOfBirth.value,
           email: state.email.value,
-          photoUrl: state.photo.value,
+          photoUrl: state.photo.value.contains('http') ? null : state.photo.value,
           pincode: state.pincode.value,
           panchayatOrMunicipality: state.panchayatOrMunicipality.value,
           name: state.name.value,

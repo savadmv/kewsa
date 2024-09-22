@@ -23,6 +23,20 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     emit(state.copyWith(user: user, isGettingUser: false, error: () => null));
   }
 
+  Future<void> deleteAccount() async {
+    if (state.isDeleting || state.user == null) {
+      return;
+    }
+    emit(state.copyWith(deletingError: () => null, isDeleting: true));
+    try {
+      await _usersRepository.deleteUser(user: state.user!);
+      emit(state.copyWith(isDeleted: true));
+    } on ApiException catch (e) {
+      emit(state.copyWith(deletingError: () => e.msg));
+    }
+    emit(state.copyWith(isDeleting: false));
+  }
+
   @override
   Future<void> close() {
     _userSubscription.cancel();

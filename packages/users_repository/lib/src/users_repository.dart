@@ -5,7 +5,6 @@ import 'package:api_exception/api_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:users_repository/src/models/user.dart';
 import 'package:users_repository/users_repository.dart';
 
 /// {@template users_repository}
@@ -71,13 +70,36 @@ class UsersRepository {
   }
 
   // Update a new user
-  Future<void> updateUser({required String ownerId, required UserEntity user}) async {
+  Future<void> updateUser({required String userId, required UserEntity user}) async {
     try {
       String? photoUrl;
       if (user.photoUrl != null) {
         photoUrl = await uploadFile(path: user.photoUrl!);
       }
-      await _usersCollection.doc(ownerId).update(user.copyWith(photoUrl: photoUrl).updateFirestore());
+      await _usersCollection.doc(userId).update(user.copyWith(photoUrl: photoUrl).updateFirestore());
+      await _usersDetailsCollection.doc(userId).update(user.copyWith(photoUrl: photoUrl).updateFirestore());
+    } catch (e) {
+      throw await ApiExceptionHandler.handle(e);
+    }
+  }
+
+  // Update a new user
+  Future<void> deleteUser({required UserEntity user}) async {
+    try {
+      if (user.photoUrl != null) {
+        await deleteFile(path: user.photoUrl!);
+      }
+      await _usersCollection.doc(user.id).delete();
+      await _usersDetailsCollection.doc(user.id).delete();
+    } catch (e) {
+      throw await ApiExceptionHandler.handle(e);
+    }
+  }
+
+  // Create a new user
+  Future<void> newUnit({required UnitNameEntity unit}) async {
+    try {
+      await _unitNamesCollection.add(unit.toFirestore());
     } catch (e) {
       throw await ApiExceptionHandler.handle(e);
     }
@@ -86,7 +108,7 @@ class UsersRepository {
   // Fetch Single user by ID
   Stream<UserEntity> getUserById({required String ownerId}) {
     return _usersCollection.doc(ownerId).snapshots().asBroadcastStream().map(UserEntity.fromFirestore);
-  }
+  } // Fetch Single user by ID
 
   // Fetch Single user by ID
   Stream<UserEntity> getUserDetailsById({required String userId}) {
@@ -95,6 +117,11 @@ class UsersRepository {
 
   // Fetch all advertisements
   Stream<List<UserEntity>> get users => _usersCollection.snapshots().asBroadcastStream().map(
+        (snapshot) => [...snapshot.docs.map(UserEntity.fromFirestore)],
+      );
+
+  // Fetch all advertisements
+  Stream<List<UserEntity>> get usersDetails => _usersDetailsCollection.snapshots().asBroadcastStream().map(
         (snapshot) => [...snapshot.docs.map(UserEntity.fromFirestore)],
       );
 

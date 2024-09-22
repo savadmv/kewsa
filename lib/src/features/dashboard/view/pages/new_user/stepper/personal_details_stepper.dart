@@ -86,9 +86,25 @@ class _PhotoInput extends StatelessWidget {
               child: SizedBox.square(
                 dimension: context.width * .3,
                 child: switch (state.photo.value.isNotEmpty) {
-                  true => Image.file(
-                      File(state.photo.value),
-                    ),
+                  true => switch (state.photo.value.contains('http')) {
+                      true => SizedBox.square(
+                          dimension: context.width * .3,
+                          child: switch (state.photo.value.contains('drive')) {
+                            true => ImageNetwork(
+                                'https://drive.google.com/uc?export=view&id=${Uri.parse(state.photo.value).queryParameters['id']}',
+                                fit: BoxFit.scaleDown,
+                              ),
+                            false => FirebaseImage(
+                                state.photo.value,
+                                fit: BoxFit.scaleDown,
+                              ),
+                          },
+                        ),
+                      false => Image.file(
+                          File(state.photo.value),
+                          fit: BoxFit.scaleDown,
+                        )
+                    },
                   false => ColoredBox(
                       color: Colors.grey.shade200,
                       child: Icon(
@@ -261,10 +277,10 @@ class _AdhaarInput extends StatelessWidget {
           enabled: !state.isSaving,
           label: 'Adhaar',
           keyboardType: TextInputType.number,
-          limit: 16,
+          limit: 12,
           errorText: switch (state.adhaar.displayError) {
             AdhaarError.empty => 'Please enter valid phone number !',
-            AdhaarError.length => 'Adhaar Number should be 16 length !',
+            AdhaarError.length => 'Adhaar Number should be 12 length !',
             _ => null,
           },
           onChanged: context.read<NewUserCubit>().adhaarChanged,
@@ -310,6 +326,7 @@ class _DobInput extends StatelessWidget {
           key: Key('personal_details_stepper_dob_input${state.dateOfBirth.value}'),
           label: 'Date of birth',
           text: state.dateOfBirth.value,
+          canPickFutureDate: false,
           onChanged: (e) => context.read<NewUserCubit>().dateOfBirthChanged(e),
         );
       },
@@ -427,10 +444,13 @@ class DateInput extends StatelessWidget {
 
   final void Function(String) onChanged;
 
+  final bool canPickFutureDate;
+
   const DateInput({
     required this.label,
     required this.text,
     required this.onChanged,
+    this.canPickFutureDate = true,
     super.key,
   });
 
@@ -441,7 +461,7 @@ class DateInput extends StatelessWidget {
         showDatePicker(
           context: context,
           firstDate: DateTime.now().subtract(const Duration(days: 365000)),
-          lastDate: DateTime.now(),
+          lastDate: DateTime.now().add(Duration(days: canPickFutureDate ? 365000 : 0)),
         ).then(
           (value) {
             if (value != null) {

@@ -29,6 +29,7 @@ class _HomePage extends StatelessWidget {
               final cubit = context.read<HomeCubit>();
               showModalBottomSheet<void>(
                 context: context,
+                isScrollControlled: true,
                 builder: (context) => BlocProvider.value(
                   value: cubit,
                   child: const UnitNamesSheet(),
@@ -42,7 +43,7 @@ class _HomePage extends StatelessWidget {
       body: const HomeContent().pad(16),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push(NewUserPage.route());
+          context.push(NewUserPage.route(null));
         },
         child: const Icon(
           Icons.add,

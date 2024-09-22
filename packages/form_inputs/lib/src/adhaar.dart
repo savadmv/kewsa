@@ -16,7 +16,7 @@ class Adhaar extends FormzInput<String, AdhaarError> {
   AdhaarError? validator(String value) {
     if (value.isEmpty) {
       return AdhaarError.empty;
-    } else if (value.length != 16) {
+    } else if (value.length != 12) {
       return AdhaarError.length;
     }
     return null;

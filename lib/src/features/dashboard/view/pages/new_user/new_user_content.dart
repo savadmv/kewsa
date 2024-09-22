@@ -3,7 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:kewsa/imports_bindings.dart';
 
 class NewUserContent extends StatelessWidget {
-  const NewUserContent({super.key});
+  const NewUserContent({
+    super.key,
+    this.userDetails,
+  });
+
+  final UserEntity? userDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +47,7 @@ class NewUserContent extends StatelessWidget {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Add Member'),
+              title: Text('${userDetails != null ? 'Update' : 'Create'} Member'),
             ),
             body: Column(
               children: [
