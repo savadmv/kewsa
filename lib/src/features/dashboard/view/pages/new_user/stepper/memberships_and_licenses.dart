@@ -33,18 +33,29 @@ class _UnitNameInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NewUserCubit, NewUserState>(
-      buildWhen: (p, c) => p.unitName != c.unitName,
-      builder: (context, state) {
-        return Input(
-          text: state.unitName.value,
-          enabled: !state.isSaving,
-          label: 'Unit Name',
-          errorText: switch (state.unitName.error) {
-            FormTextError.empty => 'Please enter unit name !',
-            _ => null,
+    return BlocBuilder<HomeCubit, HomeState>(
+      buildWhen: (p, c) => p.unitNames != c.unitNames,
+      builder: (context, homeState) {
+        if (homeState.unitNames.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return BlocBuilder<NewUserCubit, NewUserState>(
+          buildWhen: (p, c) => p.unitName != c.unitName,
+          builder: (context, state) {
+            return DropDown<String>(
+              value: switch (state.unitName.value.isEmpty) {
+                true => null,
+                false => state.unitName.value,
+              },
+              label: 'Unit Name',
+              values: homeState.unitNames.map((e) => '${e.unitName}'),
+              onChanged: context.read<NewUserCubit>().unitNameChanged,
+              error: switch (state.unitName.displayError != null) {
+                true => 'This field is required !',
+                _ => null,
+              },
+            );
           },
-          onChanged: context.read<NewUserCubit>().unitNameChanged,
         );
       },
     );
@@ -227,6 +238,63 @@ class YorAndLabelInput extends StatelessWidget {
             ),
           ],
         ),
+        if (error?.isNotEmpty ?? false)
+          Text(
+            error!,
+            style: const TextStyle(color: AppColors.error),
+          ).pOnly(bottom: 8),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
+class DropDown<T> extends StatelessWidget {
+  const DropDown({
+    required this.value,
+    required this.values,
+    required this.onChanged,
+    required this.label,
+    this.error,
+    super.key,
+  });
+
+  final T? value;
+  final Iterable<T> values;
+  final void Function(T value) onChanged;
+  final String? error;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        DropdownButtonFormField<T>(
+          padding: EdgeInsets.zero,
+          value: value,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(8),
+            labelText: label,
+          ),
+          items: [
+            for (final e in values)
+              DropdownMenuItem<T>(
+                value: e,
+                child: Row(
+                  children: [
+                    Text(
+                      '$e',
+                      style: AppStyles.text14Px.copyWith(fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+          onChanged: (selOption) {
+            if (selOption == null) return;
+            onChanged(selOption);
+          },
+        ).pOnly(bottom: 8),
         if (error?.isNotEmpty ?? false)
           Text(
             error!,

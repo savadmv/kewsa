@@ -342,10 +342,13 @@ class _BloodGroupInput extends StatelessWidget {
     return BlocBuilder<NewUserCubit, NewUserState>(
       buildWhen: (p, c) => p.bloodGroup != c.bloodGroup,
       builder: (context, state) {
-        return Input(
-          text: state.bloodGroup.value,
-          enabled: !state.isSaving,
+        return DropDown<String>(
+          value: switch (state.bloodGroup.value.isEmpty) {
+            true => null,
+            false => state.bloodGroup.value,
+          },
           label: 'Blood Group',
+          values: const ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
           onChanged: context.read<NewUserCubit>().bloodGroupChanged,
         );
       },

@@ -17,8 +17,6 @@ class HomeCubit extends Cubit<HomeState> {
   late final StreamSubscription<List<UnitNameEntity>> _unitNamesSubscription;
 
   // void init() async {
-  //   final users = await _usersRepository.usersDetails.first;
-  //   write('init user repo -> Got : ${users.length} Users Details');
 
   //   ///
   //   final thrissurCentralUnit = users.where((e) => '${e.unitName}'.contains('THRISSUR CENTRAL') || '${e.unitName}'.contains('THRISSSUR CENTRAL'));

@@ -14,7 +14,7 @@ class NewUserContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           return;
         }
@@ -49,57 +49,71 @@ class NewUserContent extends StatelessWidget {
             appBar: AppBar(
               title: Text('${userDetails != null ? 'Update' : 'Create'} Member'),
             ),
-            body: Column(
-              children: [
-                BlocBuilder<NewUserCubit, NewUserState>(
-                  buildWhen: (p, c) => p.stepper != c.stepper,
-                  builder: (context, state) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ...[
-                          (onTap: () {}, text: 'Personal'),
-                          (onTap: () {}, text: 'Nominee'),
-                          (onTap: () {}, text: 'Membership'),
-                        ].asMap().entries.map(
-                          (e) {
-                            return Flexible(
-                              child: Column(
-                                children: [
-                                  DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(),
-                                      color: Colors.black.withOpacity(e.key <= state.stepper ? 0.1 : 0),
-                                    ),
-                                    child: Text('${e.key + 1}').center.pad(8),
+            body: BlocBuilder<HomeCubit, HomeState>(
+              buildWhen: (p, c) => p.isGettingUnitNames != c.isGettingUnitNames || p.unitNames != c.unitNames || p.selUnitNames != c.selUnitNames || p.error != c.error,
+              builder: (context, state) {
+                if (state.isGettingUnitNames) {
+                  return const Loading();
+                }
+                if (state.error?.isNotEmpty ?? false) {
+                  return ErrorText(state.error);
+                }
+                if (state.unitNames.isEmpty) {
+                  return const ErrorText('No unit names available!');
+                }
+                return Column(
+                  children: [
+                    BlocBuilder<NewUserCubit, NewUserState>(
+                      buildWhen: (p, c) => p.stepper != c.stepper,
+                      builder: (context, state) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ...[
+                              (onTap: () {}, text: 'Personal'),
+                              (onTap: () {}, text: 'Nominee'),
+                              (onTap: () {}, text: 'Membership'),
+                            ].asMap().entries.map(
+                              (e) {
+                                return Flexible(
+                                  child: Column(
+                                    children: [
+                                      DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(),
+                                          color: Colors.black.withOpacity(e.key <= state.stepper ? 0.1 : 0),
+                                        ),
+                                        child: Text('${e.key + 1}').center.pad(8),
+                                      ),
+                                      Text(
+                                        e.value.text,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    e.value.text,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ).pxy(y: 16),
-                BlocBuilder<NewUserCubit, NewUserState>(
-                  buildWhen: (p, c) => p.stepper != c.stepper,
-                  builder: (context, state) {
-                    return Expanded(
-                      child: [
-                        const PersonalDetailsStepper(),
-                        const NomineeDetailsStepper(),
-                        const MembershipAndLicensesStepper(),
-                      ][state.stepper],
-                    );
-                  },
-                ),
-              ],
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ).pxy(y: 16),
+                    BlocBuilder<NewUserCubit, NewUserState>(
+                      buildWhen: (p, c) => p.stepper != c.stepper,
+                      builder: (context, state) {
+                        return Expanded(
+                          child: [
+                            const PersonalDetailsStepper(),
+                            const NomineeDetailsStepper(),
+                            const MembershipAndLicensesStepper(),
+                          ][state.stepper],
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
             bottomNavigationBar: BlocBuilder<NewUserCubit, NewUserState>(
               buildWhen: (p, c) =>

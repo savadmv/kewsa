@@ -43,7 +43,8 @@ class UserDetailsContent extends StatelessWidget {
                       onSelected: (value) {
                         switch (value) {
                           case 'Update':
-                            context.push(NewUserPage.route(state.user));
+                            final cubit = context.read<HomeCubit>();
+                            context.push(NewUserPage.route(state.user, cubit));
                           case 'Delete':
                             final cubit = context.read<UserDetailsCubit>();
                             showDialog<void>(

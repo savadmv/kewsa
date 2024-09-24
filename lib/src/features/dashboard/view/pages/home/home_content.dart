@@ -85,7 +85,8 @@ class _UserTile extends StatelessWidget {
           child: InkWell(
             onTap: () {
               if (user?.id != null) {
-                context.push(UserDetailsPage.route(id: user!.id!));
+                final cubit = context.read<HomeCubit>();
+                context.push(UserDetailsPage.route(id: user!.id!, homeCubit: cubit));
               }
             },
             child: Row(

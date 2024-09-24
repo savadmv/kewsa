@@ -24,6 +24,7 @@ class NewUserState extends Equatable {
   final ({FormText number, FormText yor}) wiremenOrsupervisor;
   final ({FormText number, FormText yor}) cOrbOraOrclassLicense;
   final String? error;
+  final bool isUpdate;
   final bool isSaving;
   final bool isSuccess;
   final bool personalDetailsIsValid;
@@ -56,6 +57,7 @@ class NewUserState extends Equatable {
     this.nomineeDetailsIsValid = false,
     this.isValid = false,
     this.isSuccess = false,
+    this.isUpdate = false,
     this.isSaving = false,
   });
 
@@ -88,6 +90,7 @@ class NewUserState extends Equatable {
         nomineeDetailsIsValid,
         nomineeDetailsIsValid,
         isValid,
+        isUpdate,
       ];
 
   @override
@@ -120,6 +123,7 @@ class NewUserState extends Equatable {
     bool? personalDetailsIsValid,
     bool? nomineeDetailsIsValid,
     bool? isValid,
+    bool? isUpdate,
   }) {
     return NewUserState(
       stepper: stepper ?? this.stepper,
@@ -148,6 +152,7 @@ class NewUserState extends Equatable {
       personalDetailsIsValid: personalDetailsIsValid ?? this.personalDetailsIsValid,
       nomineeDetailsIsValid: nomineeDetailsIsValid ?? this.nomineeDetailsIsValid,
       isValid: isValid ?? this.isValid,
+      isUpdate: isUpdate ?? this.isUpdate,
     );
   }
 }

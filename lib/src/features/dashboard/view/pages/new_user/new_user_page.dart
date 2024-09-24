@@ -8,8 +8,13 @@ class NewUserPage extends StatelessWidget {
 
   final UserEntity? userDetails;
 
-  static Route<void> route(UserEntity? userDetails) {
-    return MaterialPageRoute<void>(builder: (_) => NewUserPage(userDetails: userDetails));
+  static Route<void> route(UserEntity? userDetails, HomeCubit cubit) {
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider(
+        create: (context) => cubit,
+        child: NewUserPage(userDetails: userDetails),
+      ),
+    );
   }
 
   @override

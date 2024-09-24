@@ -7,57 +7,60 @@ class NewUserCubit extends Cubit<NewUserState> {
     UsersRepository? usersRepository,
     UserEntity? userDetails,
   })  : _usersRepository = usersRepository ?? UsersRepository(),
-        super(const NewUserState()) {
+        super(NewUserState(isUpdate: userDetails?.id != null)) {
     _updateInitialUserDetails(userDetails);
   }
 
   final UsersRepository _usersRepository;
 
   void _updateInitialUserDetails(UserEntity? userDetails) {
+    if (userDetails == null) {
+      return;
+    }
     emit(
       state.copyWith(
-        photo: FormText.dirty(userDetails?.photoUrl),
-        address: FormText.dirty(userDetails?.address),
-        name: FormText.dirty(userDetails?.name),
-        adhaar: Adhaar.dirty(value: userDetails?.adhaarNumber ?? ''),
-        bloodGroup: FormText.dirty(userDetails?.bloodGroup),
-        education: FormText.dirty(userDetails?.education),
-        dateOfBirth: FormText.dirty(userDetails?.dateOfBirth),
-        email: Email.dirty(userDetails?.email ?? ''),
-        panchayatOrMunicipality: FormText.dirty(userDetails?.panchayatOrMunicipality),
-        phone: Phone.dirty(value: userDetails?.phoneNumber ?? ''),
-        pincode: Pincode.dirty(value: userDetails?.pincode ?? ''),
-        unitName: FormText.dirty(userDetails?.unitName),
-        nomineeName: FormText.dirty(userDetails?.nomineeName),
-        nomineeAdhaar: Adhaar.dirty(value: userDetails?.nomineeAdharNumber ?? ''),
+        photo: FormText.dirty(userDetails.photoUrl),
+        address: FormText.dirty(userDetails.address),
+        name: FormText.dirty(userDetails.name),
+        adhaar: Adhaar.dirty(value: userDetails.adhaarNumber ?? ''),
+        bloodGroup: FormText.dirty(userDetails.bloodGroup),
+        education: FormText.dirty(userDetails.education),
+        dateOfBirth: FormText.dirty(userDetails.dateOfBirth),
+        email: Email.dirty(userDetails.email ?? ''),
+        panchayatOrMunicipality: FormText.dirty(userDetails.panchayatOrMunicipality),
+        phone: Phone.dirty(value: userDetails.phoneNumber ?? ''),
+        pincode: Pincode.dirty(value: userDetails.pincode ?? ''),
+        unitName: FormText.dirty(userDetails.unitName),
+        nomineeName: FormText.dirty(userDetails.nomineeName),
+        nomineeAdhaar: Adhaar.dirty(value: userDetails.nomineeAdharNumber ?? ''),
         cOrbOraOrclassLicense: (
-          number: FormText.dirty(userDetails?.cOrbOraOrclassLicenseNumber?.number),
+          number: FormText.dirty(userDetails.cOrbOraOrclassLicenseNumber?.number),
           yor: FormText.dirty(
-            userDetails?.cOrbOraOrclassLicenseNumber?.yearOfRenewal,
+            userDetails.cOrbOraOrclassLicenseNumber?.yearOfRenewal,
           ),
         ),
         governmentPension: (
-          number: FormText.dirty(userDetails?.governmentPensionNumber?.number),
+          number: FormText.dirty(userDetails.governmentPensionNumber?.number),
           yor: FormText.dirty(
-            userDetails?.governmentPensionNumber?.yearOfRenewal,
+            userDetails.governmentPensionNumber?.yearOfRenewal,
           ),
         ),
         kewsaMembership: (
-          number: FormText.dirty(userDetails?.kewsaMembershipNumber?.number),
+          number: FormText.dirty(userDetails.kewsaMembershipNumber?.number),
           yor: FormText.dirty(
-            userDetails?.kewsaMembershipNumber?.yearOfRenewal,
+            userDetails.kewsaMembershipNumber?.yearOfRenewal,
           ),
         ),
         stateWelfareFund: (
-          number: FormText.dirty(userDetails?.stateWelfareFundNumber?.number),
+          number: FormText.dirty(userDetails.stateWelfareFundNumber?.number),
           yor: FormText.dirty(
-            userDetails?.stateWelfareFundNumber?.yearOfRenewal,
+            userDetails.stateWelfareFundNumber?.yearOfRenewal,
           ),
         ),
         wiremenOrsupervisor: (
-          number: FormText.dirty(userDetails?.wiremenOrsupervisorNumber?.number),
+          number: FormText.dirty(userDetails.wiremenOrsupervisorNumber?.number),
           yor: FormText.dirty(
-            userDetails?.wiremenOrsupervisorNumber?.yearOfRenewal,
+            userDetails.wiremenOrsupervisorNumber?.yearOfRenewal,
           ),
         ),
       ),
@@ -272,44 +275,47 @@ class NewUserCubit extends Cubit<NewUserState> {
     emit(state.copyWith(isSaving: true));
 
     try {
-      await _usersRepository.createUser(
-        user: UserEntity(
-          address: state.address.value,
-          adhaarNumber: state.adhaar.value,
-          bloodGroup: state.bloodGroup.value,
-          unitName: state.unitName.value,
-          education: state.education.value,
-          dateOfBirth: state.dateOfBirth.value,
-          email: state.email.value,
-          photoUrl: state.photo.value.contains('http') ? null : state.photo.value,
-          pincode: state.pincode.value,
-          panchayatOrMunicipality: state.panchayatOrMunicipality.value,
-          name: state.name.value,
-          phoneNumber: state.phone.value,
-          nomineeName: state.nomineeName.value,
-          nomineeAdharNumber: state.nomineeAdhaar.value,
-          wiremenOrsupervisorNumber: LabelValue(
-            number: state.wiremenOrsupervisor.number.value,
-            yearOfRenewal: state.wiremenOrsupervisor.yor.value,
-          ),
-          governmentPensionNumber: LabelValue(
-            number: state.governmentPension.number.value,
-            yearOfRenewal: state.governmentPension.yor.value,
-          ),
-          stateWelfareFundNumber: LabelValue(
-            number: state.stateWelfareFund.number.value,
-            yearOfRenewal: state.stateWelfareFund.yor.value,
-          ),
-          kewsaMembershipNumber: LabelValue(
-            number: state.kewsaMembership.number.value,
-            yearOfRenewal: state.kewsaMembership.yor.value,
-          ),
-          cOrbOraOrclassLicenseNumber: LabelValue(
-            number: state.cOrbOraOrclassLicense.number.value,
-            yearOfRenewal: state.cOrbOraOrclassLicense.yor.value,
-          ),
+      final userEntity = UserEntity(
+        address: state.address.value,
+        adhaarNumber: state.adhaar.value,
+        bloodGroup: state.bloodGroup.value,
+        unitName: state.unitName.value,
+        education: state.education.value,
+        dateOfBirth: state.dateOfBirth.value,
+        email: state.email.value,
+        photoUrl: state.photo.value.contains('http') ? null : state.photo.value,
+        pincode: state.pincode.value,
+        panchayatOrMunicipality: state.panchayatOrMunicipality.value,
+        name: state.name.value,
+        phoneNumber: state.phone.value,
+        nomineeName: state.nomineeName.value,
+        nomineeAdharNumber: state.nomineeAdhaar.value,
+        wiremenOrsupervisorNumber: LabelValue(
+          number: state.wiremenOrsupervisor.number.value,
+          yearOfRenewal: state.wiremenOrsupervisor.yor.value,
+        ),
+        governmentPensionNumber: LabelValue(
+          number: state.governmentPension.number.value,
+          yearOfRenewal: state.governmentPension.yor.value,
+        ),
+        stateWelfareFundNumber: LabelValue(
+          number: state.stateWelfareFund.number.value,
+          yearOfRenewal: state.stateWelfareFund.yor.value,
+        ),
+        kewsaMembershipNumber: LabelValue(
+          number: state.kewsaMembership.number.value,
+          yearOfRenewal: state.kewsaMembership.yor.value,
+        ),
+        cOrbOraOrclassLicenseNumber: LabelValue(
+          number: state.cOrbOraOrclassLicense.number.value,
+          yearOfRenewal: state.cOrbOraOrclassLicense.yor.value,
         ),
       );
+      if (state.isUpdate) {
+        await _usersRepository.updateUser(userId: userEntity.id!, user: userEntity);
+      } else {
+        await _usersRepository.createUser(user: userEntity);
+      }
       emit(state.copyWith(isSaving: false, isSuccess: true));
     } catch (e) {
       emit(state.copyWith(error: () => '$e', isSaving: false, isSuccess: true));

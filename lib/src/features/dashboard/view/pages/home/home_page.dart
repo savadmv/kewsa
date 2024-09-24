@@ -43,7 +43,10 @@ class _HomePage extends StatelessWidget {
       body: const HomeContent().pad(16),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push(NewUserPage.route(null));
+          final cubit = context.read<HomeCubit>();
+          context.push(
+            NewUserPage.route(null, cubit),
+          );
         },
         child: const Icon(
           Icons.add,
